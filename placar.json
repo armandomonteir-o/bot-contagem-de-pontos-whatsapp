@@ -3,11 +3,22 @@
     "name": "Armando",
     "leitura": {
       "points": 1,
-      "lastDate": "2025-06-19"
+      "lastDate": "2025-06-25"
     },
     "corrida": {
-      "points": 1,
+      "points": 0,
       "lastDate": "2025-06-19"
+    }
+  },
+  "5524998416823@c.us": {
+    "name": "Jampa",
+    "leitura": {
+      "points": 0,
+      "lastDate": "2025-06-18"
+    },
+    "corrida": {
+      "points": 0,
+      "lastDate": "2025-06-18"
     }
   }
 }

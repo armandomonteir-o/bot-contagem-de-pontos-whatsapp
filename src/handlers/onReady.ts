@@ -66,5 +66,38 @@ export function initializeReadyHandler(client: Client): void {
       },
       { timezone: "America/Sao_Paulo" }
     );
+
+    cron.schedule(
+      "0 9 * * *",
+      async () => {
+        try {
+          console.log("[CRON] Enviando lembrete diário de registro...");
+
+          // Mensagem que será enviada
+          const reminderMessage = `
+LEMBRETE DO DIA:
+
+Você já registrou sua atividade de ONTEM? 🤔
+
+Se você leu ou correu ontem, não se esqueça de pontuar.
+
+Para registrar, use os comandos:
+*!euli* - para marcar seu ponto de leitura 📚
+*!eucorri* - para marcar seu ponto de corrida 🏃‍♂️
+
+Pra cima deles
+          `;
+
+          const groupChat = await client.getChatById(groupId);
+
+          await groupChat.sendMessage(reminderMessage.trim());
+
+          console.log("[CRON] Lembrete diário enviado com sucesso!");
+        } catch (error) {
+          console.error("[CRON] Falha ao enviar lembrete diário:", error);
+        }
+      },
+      { timezone: "America/Sao_Paulo" }
+    );
   });
 }

@@ -85,7 +85,7 @@ export function initializeMessageHandler(client: Client) {
             await saveScore(placar);
 
             await msg.reply(
-              `${activityEmoji} Ponto de ${activity} registrado para *${userName}*!\nTotal de ${activity}: ${placar[userId][activity].points} pontos.`
+              `${activityEmoji} Ponto de ${activity} registrado para *${userName}*!\nTotal de pontos de ${activity}: ${placar[userId][activity].points} pontos.`
             );
           } catch (error) {
             console.error(`[ERRO NO COMANDO ${command}]`, error);
