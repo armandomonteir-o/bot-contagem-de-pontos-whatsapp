@@ -1,15 +1,15 @@
 import fs from "fs/promises";
 import path from "path";
 
-const scoreFilePath = path.join(process.cwd(), "placar.json");
+const scoreFilePath = path.join(process.cwd(), "data", "scores.json");
 
 type UserScore = {
   name: string;
-  leitura: {
+  reading: {
     points: number;
     lastDate: string;
   };
-  corrida: {
+  running: {
     points: number;
     lastDate: string;
   };

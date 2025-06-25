@@ -2,6 +2,7 @@ import wweb from "whatsapp-web.js";
 import { Client, Message } from "whatsapp-web.js";
 import { readScore, saveScore } from "../utils/scoreManager";
 import { getCustomName } from "../utils/nameManager";
+import { activityDetails, ActivityType } from "../utils/activityManager";
 
 export function initializeMessageHandler(client: Client) {
   client.on("message_create", async (msg: Message) => {
@@ -24,26 +25,24 @@ export function initializeMessageHandler(client: Client) {
 
             const sortedUsers = Object.values(placar).sort(
               (a, b) =>
-                b.leitura.points +
-                b.corrida.points -
-                (a.leitura.points + a.corrida.points)
+                b.reading.points +
+                b.running.points -
+                (a.reading.points + a.running.points)
             );
 
             if (sortedUsers.length === 0) {
               response += "O placar ainda está zerado!";
             } else {
               sortedUsers.forEach((user, index) => {
-                const total = user.leitura.points + user.corrida.points;
+                const total = user.reading.points + user.running.points;
                 response += `${index + 1}º - *${
                   user.name
                 }* - ${total} ponto(s)\n`;
-                response += `   (📚 Leitura: ${user.leitura.points} | 🏃‍♂️ Corrida: ${user.corrida.points})\n\n`;
+                response += `   (${activityDetails.reading.emoji} ${activityDetails.reading.name}: ${user.reading.points} | ${activityDetails.running.emoji} ${activityDetails.running.name}: ${user.running.points})\n\n`;
               });
             }
             await msg.reply(response);
-          } catch (error) {
-            /* ... */
-          }
+          } catch (error) {}
           break;
 
         case "euli":
@@ -59,14 +58,15 @@ export function initializeMessageHandler(client: Client) {
             const placar = await readScore();
             const today = new Date().toISOString().slice(0, 10);
 
-            const activity = command === "euli" ? "leitura" : "corrida";
-            const activityEmoji = command === "euli" ? "📚" : "🏃‍♂️";
+            const activity: ActivityType =
+              command === "euli" ? "reading" : "running";
+            const presentation = activityDetails[activity];
 
             if (!placar[userId]) {
               placar[userId] = {
                 name: userName,
-                leitura: { points: 0, lastDate: "" },
-                corrida: { points: 0, lastDate: "" },
+                reading: { points: 0, lastDate: "" },
+                running: { points: 0, lastDate: "" },
               };
             }
 
@@ -85,7 +85,7 @@ export function initializeMessageHandler(client: Client) {
             await saveScore(placar);
 
             await msg.reply(
-              `${activityEmoji} Ponto de ${activity} registrado para *${userName}*!\nTotal de pontos de ${activity}: ${placar[userId][activity].points} pontos.`
+              `${presentation.emoji} Ponto de ${presentation.name} registrado...`
             );
           } catch (error) {
             console.error(`[ERRO NO COMANDO ${command}]`, error);

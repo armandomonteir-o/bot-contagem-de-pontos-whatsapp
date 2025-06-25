@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 
-const historyFilePath = path.join(process.cwd(), "historico.json");
+const historyFilePath = path.join(process.cwd(), "data", "history.json");
 
 export type Winner = {
   name: string;
@@ -11,8 +11,8 @@ export type Winner = {
 export type HistoryData = {
   // chave será ano-mes (ex: "2025-06")
   [month: string]: {
-    leitura?: Winner;
-    corrida?: Winner; // uso do ? pois poderá ocorrer um empate
+    reading?: Winner;
+    running?: Winner; // uso do ? pois poderá ocorrer um empate
   };
 };
 

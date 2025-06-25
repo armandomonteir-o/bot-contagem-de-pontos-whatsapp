@@ -14,7 +14,7 @@ export function initializeReadyHandler(client: Client): void {
     }
 
     cron.schedule(
-      "41 19 * * *",
+      "13 14 * * *",
       async () => {
         try {
           console.log(`[CRON] Enviando placar diário...`);
@@ -25,9 +25,9 @@ export function initializeReadyHandler(client: Client): void {
 
           const sortedUsers = Object.values(placar).sort(
             (a, b) =>
-              b.leitura.points +
-              b.corrida.points -
-              (a.leitura.points + a.corrida.points)
+              b.reading.points +
+              b.running.points -
+              (a.reading.points + a.running.points)
           );
 
           if (sortedUsers.length === 0) {
@@ -35,14 +35,14 @@ export function initializeReadyHandler(client: Client): void {
               "O placar ainda está zerado! Quem vai marcar o primeiro ponto hoje? Use `!euli` ou `!eucorri`!";
           } else {
             sortedUsers.forEach((user, index) => {
-              const total = user.leitura.points + user.corrida.points;
+              const total = user.reading.points + user.running.points;
               response += `${index + 1}º - *${
                 user.name
               }* - ${total} ponto(s)\n`;
-              response += `   (📚 Leitura: ${user.leitura.points} | 🏃‍♂️ Corrida: ${user.corrida.points})\n\n`;
+              response += `   (📚 leitura: ${user.reading.points} | 🏃‍♂️ corrida: ${user.running.points})\n\n`;
             });
           }
-          response += "Que vençam os melhores!";
+          response += "Que vença o melhor";
 
           await groupChat.sendMessage(response);
         } catch (error) {
@@ -73,7 +73,6 @@ export function initializeReadyHandler(client: Client): void {
         try {
           console.log("[CRON] Enviando lembrete diário de registro...");
 
-          // Mensagem que será enviada
           const reminderMessage = `
 LEMBRETE DO DIA:
 

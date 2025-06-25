@@ -4,7 +4,7 @@ import { readHistory, saveHistory, Winner } from "../utils/historyManager";
 
 function findWinner(
   scoreData: ScoreData,
-  category: "leitura" | "corrida"
+  category: "reading" | "running"
 ): Winner | null {
   let winner: Winner | null = null;
   let maxPoints = 0;
@@ -33,51 +33,49 @@ export async function runMonthlyReset(client: Client): Promise<void> {
     return;
   }
 
-  const placarAtual = await readScore();
-  if (Object.keys(placarAtual).length === 0) {
+  const currentScores = await readScore();
+  if (Object.keys(currentScores).length === 0) {
     console.log(
       "[RESET MENSAL] Placar vazio. Nenhum vencedor a ser declarado."
     );
     return;
   }
 
-  const vencedorLeitura = findWinner(placarAtual, "leitura");
-  const vencedorCorrida = findWinner(placarAtual, "corrida");
+  const readingWinner = findWinner(currentScores, "reading");
+  const runningWinner = findWinner(currentScores, "running");
 
   let announcement = "🏆🎉 *Mês finalizado! Vencedores:!* 🎉🏆\n\n";
   announcement += "O placar foi resetado para um novo mês de competição!\n\n";
   announcement += "Parabéns aos grandes vencedores:\n\n";
 
-  if (vencedorLeitura) {
-    announcement += `📚 *Campeão de Leitura:* ${vencedorLeitura.name} com ${vencedorLeitura.points} pontos!\n`;
+  if (readingWinner) {
+    announcement += `📚 *Campeão de leitura:* ${readingWinner.name} com ${readingWinner.points} pontos!\n`;
   } else {
-    announcement += "📚 *Campeão de Leitura:* Ninguém pontuou este mês!\n";
+    announcement += "📚 *Campeão de leitura:* Ninguém pontuou este mês!\n";
   }
 
-  if (vencedorCorrida) {
-    announcement += `🏃‍♂️ *Campeão de Corrida:* ${vencedorCorrida.name} com ${vencedorCorrida.points} pontos!\n`;
+  if (runningWinner) {
+    announcement += `🏃‍♂️ *Campeão de corrida:* ${runningWinner.name} com ${runningWinner.points} pontos!\n`;
   } else {
-    announcement += "🏃‍♂️ *Campeão de Corrida:* Ninguém pontuou este mês!\n";
+    announcement += "🏃‍♂️ *Campeão de corrida:* Ninguém pontuou este mês!\n";
   }
   announcement += "\nPreparem-se para o próximo mês! A disputa recomeça agora!";
 
   const history = await readHistory();
   const currentMonthKey = new Date().toISOString().slice(0, 7); // Formato "AAAA-MM"
   history[currentMonthKey] = {
-    leitura: vencedorLeitura ?? undefined,
-    corrida: vencedorCorrida ?? undefined,
+    reading: readingWinner ?? undefined,
+    running: runningWinner ?? undefined,
   };
   await saveHistory(history);
 
-  const placarResetado = placarAtual;
-  for (const userId in placarResetado) {
-    placarResetado[userId].leitura.points = 0;
-    placarResetado[userId].corrida.points = 0;
-
+  const resetScores = currentScores;
+  for (const userId in resetScores) {
+    resetScores[userId].reading.points = 0;
+    resetScores[userId].running.points = 0;
   }
-  await saveScore(placarResetado);
+  await saveScore(resetScores);
   console.log("[RESET MENSAL] Placar resetado com sucesso.");
-
 
   const groupChat = await client.getChatById(groupId);
   await groupChat.sendMessage(announcement);
