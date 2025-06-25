@@ -1,7 +1,6 @@
-// Em src/handlers/onReady.ts
 import { Client } from "whatsapp-web.js";
 import cron from "node-cron";
-// Importamos nossas funções do scoreManager
+import { runMonthlyReset } from "../tasks/monthlyReset.js";
 import { readScore } from "../utils/scoreManager.js";
 
 export function initializeReadyHandler(client: Client): void {
@@ -14,7 +13,6 @@ export function initializeReadyHandler(client: Client): void {
       return;
     }
 
-    // Tarefa para postar o placar todo dia às 08:00
     cron.schedule(
       "41 19 * * *",
       async () => {
@@ -49,6 +47,21 @@ export function initializeReadyHandler(client: Client): void {
           await groupChat.sendMessage(response);
         } catch (error) {
           console.error("[CRON] Falha ao enviar placar diário:", error);
+        }
+      },
+      { timezone: "America/Sao_Paulo" }
+    );
+
+    cron.schedule(
+      "50 23 L * *",
+      async () => {
+        try {
+          await runMonthlyReset(client);
+        } catch (error) {
+          console.error(
+            "[CRON - MENSAL] Falha ao executar o reset mensal:",
+            error
+          );
         }
       },
       { timezone: "America/Sao_Paulo" }

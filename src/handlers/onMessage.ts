@@ -5,7 +5,6 @@ import { getCustomName } from "../utils/nameManager";
 
 export function initializeMessageHandler(client: Client) {
   client.on("message_create", async (msg: Message) => {
-    
     /*if (msg.fromMe) {
         return;
       }*/
@@ -33,8 +32,6 @@ export function initializeMessageHandler(client: Client) {
             if (sortedUsers.length === 0) {
               response += "O placar ainda está zerado!";
             } else {
-              // Este código JÁ FUNCIONARÁ, pois `user.name` agora terá o nome customizado
-              // que foi salvo pelo comando !euli ou !eucorri.
               sortedUsers.forEach((user, index) => {
                 const total = user.leitura.points + user.corrida.points;
                 response += `${index + 1}º - *${
@@ -50,7 +47,7 @@ export function initializeMessageHandler(client: Client) {
           break;
 
         case "euli":
-        case "eucorri": // Ambos os comandos usarão uma lógica parecida
+        case "eucorri":
           try {
             const contact = await msg.getContact();
             const rawUserId = contact.id._serialized;
@@ -62,7 +59,6 @@ export function initializeMessageHandler(client: Client) {
             const placar = await readScore();
             const today = new Date().toISOString().slice(0, 10);
 
-            // Define qual atividade estamos atualizando
             const activity = command === "euli" ? "leitura" : "corrida";
             const activityEmoji = command === "euli" ? "📚" : "🏃‍♂️";
 
